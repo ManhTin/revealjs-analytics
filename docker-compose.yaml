@@ -6,8 +6,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: nextjs-sandbox-dev
+      POSTGRES_DB: revealjs-pp-tracking-api-dev
     networks:
-      - nextjs-sandbox
+      - revealjs-pp-tracking-api
 networks:
-  nextjs-sandbox:
+  revealjs-pp-tracking-api:
