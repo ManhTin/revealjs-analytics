@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
   	extend: {
+			fontFamily: {
+        sans: ['var(--font-atkinson-hyperlegible)'],
+        mono: ['var(--font-jetbrains-mono)'],
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
