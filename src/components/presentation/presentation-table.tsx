@@ -144,7 +144,6 @@ export const columns: ColumnDef<PresentationData>[] = [
 ];
 
 export function PresentationTable({ data }: { data: PresentationData[] }) {
-  console.log("🚀 ~ PresentationTable ~ data:", data);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});

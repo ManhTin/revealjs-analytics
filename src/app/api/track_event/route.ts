@@ -12,7 +12,6 @@ interface EventDto {
 
 export async function POST(req: Request) {
   const receivedEvent: EventDto = await req.json();
-  console.log("🚀 ~ POST ~ res:", receivedEvent);
 
   const event = await prisma.event.create({
     data: receivedEvent,

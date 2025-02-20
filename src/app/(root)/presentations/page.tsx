@@ -18,8 +18,6 @@ export default async function PresentationsPage() {
     },
   });
 
-  console.log("🚀 ~ data ~ data:", data);
-
   return (
     <>
       <Header title="Presentations" actionPath="/presentations/new" />

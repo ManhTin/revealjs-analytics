@@ -171,7 +171,6 @@ export const columns: ColumnDef<Event>[] = [
 ];
 
 export function EventTable({ data }: { data: Event[] }) {
-  console.log("🚀 ~ EventTable ~ data:", data);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
