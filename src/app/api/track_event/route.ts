@@ -11,11 +11,22 @@ interface EventDto {
 }
 
 export async function POST(req: Request) {
-  const receivedEvent: EventDto = await req.json();
+  const receivedEvents: EventDto[] = await req.json();
 
-  const event = await prisma.event.create({
-    data: receivedEvent,
+  const events = await prisma.event.createMany({
+    data: receivedEvents,
   });
 
-  return Response.json({ ...event });
+  if (events) {
+    return Response.json({
+      status: 200,
+    });
+  }
+
+  return Response.json({
+    status: 500,
+    body: {
+      message: "An error occurred while saving the events",
+    },
+  });
 }
