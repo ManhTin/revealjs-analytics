@@ -1,3 +1,5 @@
+import Header from "@/components/header";
+
 export default function HomePage() {
-  return <h1 className="text-3xl">Overview</h1>;
+  return <Header title="Overview" />;
 }

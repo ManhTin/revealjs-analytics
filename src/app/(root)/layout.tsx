@@ -30,6 +30,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${atkinsonHyperlegible.className} ${jetbrainsMono.variable} antialiased`}
+      suppressHydrationWarning
     >
       <body>
         <ThemeProvider
@@ -39,7 +40,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          <div className="px-6 py-4">{children}</div>
+          <div className="px-6 py-4">
+            <div className="flex flex-1 flex-col space-y-4">{children}</div>
+          </div>
         </ThemeProvider>
       </body>
     </html>
