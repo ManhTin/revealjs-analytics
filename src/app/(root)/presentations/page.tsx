@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import { PresentationTable } from "@/components/presentation/presentation-table";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -6,18 +7,23 @@ export default async function PresentationsPage() {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) {
-    return;
-  }
-
-  const presentations = await prisma.presentation.findMany({
+  const data = await prisma.presentation.findMany({
     where: { userId: userId },
     include: {
       _count: {
-        select: { events: true },
+        select: {
+          events: { where: { eventName: "ready" } },
+        },
       },
     },
   });
 
-  return <Header title="Presentations" actionPath="/presentations/new" />;
+  console.log("🚀 ~ data ~ data:", data);
+
+  return (
+    <>
+      <Header title="Presentations" actionPath="/presentations/new" />
+      <PresentationTable data={data} />
+    </>
+  );
 }

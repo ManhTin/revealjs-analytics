@@ -1,5 +1,28 @@
+import { EventTable } from "@/components/event/event-table";
 import Header from "@/components/header";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-export default function EventsPage() {
-  return <Header title="Events" />;
+export default async function EventsPage() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const data = await prisma.event.findMany({
+    where: {
+      presentation: {
+        userId: userId,
+      },
+    },
+    take: 200,
+    orderBy: {
+      timestamp: "desc",
+    },
+  });
+
+  return (
+    <>
+      <Header title="Event Log" />
+      <EventTable data={data} />
+    </>
+  );
 }

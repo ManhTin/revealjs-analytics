@@ -1,16 +1,24 @@
-import { auth } from "@/lib/auth";
+"use client";
+
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import SignIn from "./sign-in";
-import SignOut from "./sign-out";
+import { usePathname } from "next/navigation";
+import SignInButton from "./sign-in-button";
+import SignOutButton from "./sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DarkModeToggle } from "./ui/dark-mode-toggle";
 import { Separator } from "./ui/separator";
 
-export default async function Navbar() {
-  const session = await auth();
+export default function Navbar() {
+  const { data: session } = useSession();
+  const pathname = usePathname();
 
   function shortUsername(username: string) {
     return username.slice(0, 2).toUpperCase();
+  }
+
+  function linkIsActive(href: string) {
+    return pathname === href ? "" : "text-gray-500";
   }
 
   return (
@@ -18,13 +26,13 @@ export default async function Navbar() {
       <header className="px-6 py-2 mb-6 space-y-2">
         <nav className="flex justify-between items-center">
           <div className="flex items-center space-x-8">
-            <Link href="/">
+            <Link href="/" className={linkIsActive("/")}>
               <span>Overview</span>
             </Link>
-            <Link href="/presentations">
+            <Link href="/presentations" className={linkIsActive("/presentations")}>
               <span>Presentations</span>
             </Link>
-            <Link href="/events">
+            <Link href="/events" className={linkIsActive("/events")}>
               <span>Event Log</span>
             </Link>
           </div>
@@ -33,7 +41,7 @@ export default async function Navbar() {
             <DarkModeToggle />
             {session?.user ? (
               <>
-                <SignOut />
+                <SignOutButton />
                 <Avatar>
                   <AvatarImage src={session.user.image!} />
                   <AvatarFallback>
@@ -42,7 +50,7 @@ export default async function Navbar() {
                 </Avatar>
               </>
             ) : (
-              <SignIn />
+              <SignInButton />
             )}
           </div>
         </nav>

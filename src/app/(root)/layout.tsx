@@ -3,6 +3,7 @@ import { Atkinson_Hyperlegible, JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SessionProvider } from "next-auth/react";
 
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
   variable: "--font-atkinson-hyperlegible",
@@ -39,10 +40,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <div className="px-6 py-4">
-            <div className="flex flex-1 flex-col space-y-4">{children}</div>
-          </div>
+          <SessionProvider>
+            <Navbar />
+            <div className="px-6 py-4">
+              <div className="flex flex-1 flex-col space-y-4">{children}</div>
+            </div>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
