@@ -1,6 +1,5 @@
 "use client";
 
-import { LayoutDashboard, Logs, Presentation } from "lucide-react";
 import type { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -16,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
 
 const PATHMAP = {
   "/": {
@@ -86,7 +86,7 @@ export default function Navbar() {
             {session?.user ? (
               <AvatarDropdown session={session} />
             ) : (
-              <SignInButton />
+              <Skeleton className="h-10 w-10 rounded-full" />
             )}
           </div>
         </nav>

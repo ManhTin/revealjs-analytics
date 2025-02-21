@@ -1,16 +1,30 @@
 import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
+import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function PresentationsPage() {
   const session = await auth();
   if (!session) redirect("/sign-in");
 
-  const userId = session.user?.id;
+  return (
+    <>
+      <Header
+        title="Presentations"
+        action={{ path: "/presentations/create", label: "Create", icon: Plus }}
+      />
+      <Suspense fallback={<DataTableSkeleton rowCount={10} columnCount={4} />}>
+        <PresentationTableWrapper userId={session.user?.id} />
+      </Suspense>
+    </>
+  );
+}
 
+async function PresentationTableWrapper({ userId }: { userId: string | undefined }) {
   const data = await prisma.presentation.findMany({
     where: { userId: userId },
     include: {
@@ -23,13 +37,5 @@ export default async function PresentationsPage() {
     orderBy: { updatedAt: "desc" },
   });
 
-  return (
-    <>
-      <Header
-        title="Presentations"
-        action={{ path: "/presentations/create", label: "Create", icon: Plus }}
-      />
-      <PresentationTable data={data} />
-    </>
-  );
+  return <PresentationTable data={data} />;
 }

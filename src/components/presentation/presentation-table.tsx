@@ -23,7 +23,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -36,7 +35,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Presentation } from "@prisma/client";
-import router from "next/dist/client/router";
 import { redirect } from "next/navigation";
 
 interface PresentationData extends Presentation {
