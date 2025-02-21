@@ -69,21 +69,6 @@ export const columns: ColumnDef<PresentationData>[] = [
     cell: ({ row }) => <div className="capitalize">{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "description",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Description
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
-  },
-  {
     accessorKey: "url",
     header: ({ column }) => {
       return (
@@ -97,6 +82,21 @@ export const columns: ColumnDef<PresentationData>[] = [
       );
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("url")}</div>,
+  },
+  {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Description
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
   },
   {
     accessorKey: "Views",
@@ -118,7 +118,7 @@ export const columns: ColumnDef<PresentationData>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const presentation = row.original;
 
       return (
         <DropdownMenu>
@@ -130,8 +130,8 @@ export const columns: ColumnDef<PresentationData>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-              Copy payment ID
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(presentation.id)}>
+              Copy presentation ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>

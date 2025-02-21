@@ -3,11 +3,12 @@ import { Atkinson_Hyperlegible, JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
 
 const atkinsonHyperlegible = Atkinson_Hyperlegible({
   variable: "--font-atkinson-hyperlegible",
-  weight: "400",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
             <Navbar />
             <div className="px-6 py-4">
               <div className="flex flex-1 flex-col space-y-4">{children}</div>
+              <Toaster />
             </div>
           </SessionProvider>
         </ThemeProvider>

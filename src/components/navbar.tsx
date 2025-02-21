@@ -1,5 +1,6 @@
 "use client";
 
+import { LayoutDashboard, Logs, Presentation } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,16 +10,38 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DarkModeToggle } from "./ui/dark-mode-toggle";
 import { Separator } from "./ui/separator";
 
-export default function Navbar() {
-  const { data: session } = useSession();
-  const pathname = usePathname();
+const PATHMAP = {
+  "/": {
+    title: "Dashboard",
+  },
+  "/presentations": {
+    title: "Presentations",
+  },
+  "/events": {
+    title: "Events",
+  },
+};
 
-  function shortUsername(username: string) {
-    return username.slice(0, 2).toUpperCase();
-  }
+function NavLink({ path }: { path: keyof typeof PATHMAP }) {
+  const pathname = usePathname();
+  const { title } = PATHMAP[path];
 
   function linkIsActive(href: string) {
     return pathname === href ? "" : "text-gray-500";
+  }
+
+  return (
+    <Link href={path} className={linkIsActive(path)}>
+      <span>{title}</span>
+    </Link>
+  );
+}
+
+export default function Navbar() {
+  const { data: session } = useSession();
+
+  function shortUsername(username: string) {
+    return username.slice(0, 2).toUpperCase();
   }
 
   return (
@@ -26,15 +49,9 @@ export default function Navbar() {
       <header className="px-6 py-2 mb-6 space-y-2">
         <nav className="flex justify-between items-center">
           <div className="flex items-center space-x-8">
-            <Link href="/" className={linkIsActive("/")}>
-              <span>Overview</span>
-            </Link>
-            <Link href="/presentations" className={linkIsActive("/presentations")}>
-              <span>Presentations</span>
-            </Link>
-            <Link href="/events" className={linkIsActive("/events")}>
-              <span>Event Log</span>
-            </Link>
+            <NavLink path="/" />
+            <NavLink path="/presentations" />
+            <NavLink path="/events" />
           </div>
 
           <div className="flex items-center space-x-4">
