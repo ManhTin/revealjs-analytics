@@ -2,6 +2,7 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Presentation } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -26,22 +27,25 @@ export type PresentationSubmitResult = {
 };
 
 interface PresentationFormProps {
-  formSubmitAction: (formData: FormData) => Promise<PresentationSubmitResult>;
-  initialValues?: z.infer<typeof PresentationFormSchema>;
+  formSubmitAction: (
+    data: FormData,
+    presentation?: Presentation,
+  ) => Promise<PresentationSubmitResult>;
+  presentation?: Presentation;
 }
 
 export default function PresentationForm({
   formSubmitAction,
-  initialValues,
+  presentation,
 }: PresentationFormProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof PresentationFormSchema>>({
     resolver: zodResolver(PresentationFormSchema),
-    defaultValues: initialValues ?? {
-      title: "",
-      description: "",
-      url: "",
+    defaultValues: {
+      title: presentation?.title ?? "",
+      description: presentation?.description ?? "",
+      url: presentation?.url ?? "",
     },
   });
 
@@ -51,7 +55,7 @@ export default function PresentationForm({
     formData.append("description", data.description ?? "");
     formData.append("url", data.url);
 
-    const result = await formSubmitAction(formData);
+    const result = await formSubmitAction(formData, presentation);
 
     toast({
       title: result.message,
@@ -109,7 +113,12 @@ export default function PresentationForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Save</Button>
+        <div className="flex justify-start space-x-2">
+          <Button variant="outline" type="button" onClick={() => redirect("/presentations")}>
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </div>
       </form>
     </Form>
   );

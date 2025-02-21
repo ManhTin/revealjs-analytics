@@ -2,6 +2,7 @@ import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Plus } from "lucide-react";
 
 export default async function PresentationsPage() {
   const session = await auth();
@@ -16,11 +17,15 @@ export default async function PresentationsPage() {
         },
       },
     },
+    orderBy: { updatedAt: "desc" },
   });
 
   return (
     <>
-      <Header title="Presentations" actionPath="/presentations/new" />
+      <Header
+        title="Presentations"
+        action={{ path: "/presentations/create", label: "Create", icon: Plus }}
+      />
       <PresentationTable data={data} />
     </>
   );

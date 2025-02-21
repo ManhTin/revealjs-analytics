@@ -36,6 +36,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Presentation } from "@prisma/client";
+import router from "next/dist/client/router";
+import { redirect } from "next/navigation";
 
 interface PresentationData extends Presentation {
   _count: { events: number };
@@ -130,12 +132,12 @@ export const columns: ColumnDef<PresentationData>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => redirect(`/presentations/${presentation.id}/edit`)}>
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(presentation.id)}>
               Copy presentation ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
