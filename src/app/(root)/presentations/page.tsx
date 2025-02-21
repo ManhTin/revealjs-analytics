@@ -3,10 +3,13 @@ import { PresentationTable } from "@/components/presentation/presentation-table"
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Plus } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function PresentationsPage() {
   const session = await auth();
-  const userId = session?.user?.id;
+  if (!session) redirect("/sign-in");
+
+  const userId = session.user?.id;
 
   const data = await prisma.presentation.findMany({
     where: { userId: userId },
