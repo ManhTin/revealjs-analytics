@@ -1,8 +1,8 @@
 import { EventTable } from "@/components/event/event-table";
 import Header from "@/components/header";
 import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
+import { getUserEvents } from "@/data/event";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -14,24 +14,14 @@ export default async function EventsPage() {
     <>
       <Header title="Event Log" />
       <Suspense fallback={<DataTableSkeleton rowCount={15} columnCount={6} />}>
-        <EventTableWrapper userId={session.user?.id} />
+        <EventTableWrapper />
       </Suspense>
     </>
   );
 }
 
-async function EventTableWrapper({ userId }: { userId: string | undefined }) {
-  const data = await prisma.event.findMany({
-    where: {
-      presentation: {
-        userId: userId,
-      },
-    },
-    take: 300,
-    orderBy: {
-      timestamp: "desc",
-    },
-  });
+async function EventTableWrapper() {
+  const data = await getUserEvents();
 
   return <EventTable data={data} />;
 }

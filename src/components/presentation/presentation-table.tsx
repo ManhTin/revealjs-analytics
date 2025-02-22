@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Clipboard, Eye, MoreHorizontal, Pencil } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -129,12 +129,17 @@ export const columns: ColumnDef<PresentationData>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => redirect(`/presentations/${presentation.id}`)}>
+              <Eye />
+              Details
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => redirect(`/presentations/${presentation.id}/edit`)}>
+              <Pencil />
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(presentation.id)}>
-              Copy presentation ID
+              <Clipboard />
+              Copy ID
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
