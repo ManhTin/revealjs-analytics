@@ -1,15 +1,13 @@
 import Header from "@/components/header";
 import PresentationForm, {} from "@/components/presentation/presentation-form";
 import { formSubmitAction } from "@/components/presentation/presentation-form-update-action";
-import { prisma } from "@/lib/prisma";
+import { getPresentationById } from "@/data/presentation";
 import { ChevronLeft } from "lucide-react";
 
 export default async function EditPresentation({ params }: { params: { id: string } }) {
   const presentationId = params.id;
 
-  const presentation = await prisma.presentation.findFirstOrThrow({
-    where: { id: presentationId },
-  });
+  const presentation = await getPresentationById(presentationId);
 
   return (
     <>

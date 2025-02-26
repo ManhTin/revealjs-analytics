@@ -1,7 +1,7 @@
 import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
 import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
-import { getUserPresentations } from "@/data/presentation";
+import { getPresentationsByUser } from "@/data/presentation";
 import { auth } from "@/lib/auth";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -25,7 +25,7 @@ export default async function PresentationsPage() {
 }
 
 async function PresentationTableWrapper() {
-  const data = await getUserPresentations();
+  const data = await getPresentationsByUser();
 
   return <PresentationTable data={data} />;
 }
