@@ -1,32 +1,34 @@
-import { prisma } from "@/lib/prisma";
-import type { InputJsonValue } from "@prisma/client/runtime/library";
+import { PrismaEventRepository } from "@/repositories/eventRepository";
+import { EventPersistenceService } from "@/services/eventPersistenceService";
+import { EventProcessingService, type LogEventsDto } from "@/services/eventProcessingService";
 
-interface EventDto {
-  presentationId: string;
-  eventName: string;
-  slideNumber: number;
-  timestamp: Date;
-  url: string;
-  data?: InputJsonValue;
-}
+// Initialize dependencies
+const eventRepository = new PrismaEventRepository();
+const eventProcessingService = new EventProcessingService();
+const eventPersistenceService = new EventPersistenceService(eventRepository);
 
 export async function POST(req: Request) {
-  const receivedEvents: EventDto[] = await req.json();
+  try {
+    const receivedEvents: LogEventsDto = await req.json();
 
-  const events = await prisma.event.createMany({
-    data: receivedEvents,
-  });
+    // Process events (convert string to enum types)
+    const processedEvents = eventProcessingService.processEvents(receivedEvents);
 
-  if (events) {
+    const result = await eventPersistenceService.persistEvents(processedEvents);
+
+    if (result) {
+      return Response.json({ status: 200 });
+    }
+
     return Response.json({
-      status: 200,
+      status: 500,
+      body: { message: "An error occurred while saving the events" },
+    });
+  } catch (error) {
+    console.error("Error processing event tracking:", error);
+    return Response.json({
+      status: 500,
+      body: { message: "Failed to process events" },
     });
   }
-
-  return Response.json({
-    status: 500,
-    body: {
-      message: "An error occurred while saving the events",
-    },
-  });
 }

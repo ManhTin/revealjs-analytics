@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getPresentationById, getPresentationTime } from "@/data/presentation";
+import { getPresentationById } from "@/data/presentation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,23 +24,12 @@ export default async function PageView({ params }: { params: { id: string } }) {
   // TODO check if user is allowed to view this presentation
   const { id } = await params;
   const presentation = await getPresentationById(id);
-  const totalViews = presentation._count.events;
-  const { count: completedCount, sum: totalTimeSum } = await getPresentationTime(id);
-  console.log("🚀 ~ PageView ~ completedCount:", completedCount);
-  console.log("🚀 ~ PageView ~ totalTimeSum:", totalTimeSum);
-  const totalTimeSeconds: number = totalTimeSum
-    .split(":")
-    .reduce((acc: number, time: string) => acc * 60 + +time, 0);
-  console.log("🚀 ~ PageView ~ totalTime:", totalTimeSeconds);
-  const avgTime = totalTimeSeconds / totalViews;
-  console.log("🚀 ~ PageView ~ avgTime:", avgTime);
-  // convert totalTimeSeconds to timestamp format
-  const hours = Math.floor(avgTime / 3600);
-  const minutes = Math.floor((avgTime % 3600) / 60);
-  const seconds = avgTime % 60;
-  const avgTimeString = `${hours}:${minutes}:${Math.trunc(seconds)}`;
 
   // Mock data for charts and visualizations
+  const totalViews = 1204;
+  const totalTimeSum = 11412;
+  const avgTimeString = 840;
+
   const mockSlideData = [
     { slide: 1, views: 150, timeSpent: 320 },
     { slide: 2, views: 145, timeSpent: 280 },
