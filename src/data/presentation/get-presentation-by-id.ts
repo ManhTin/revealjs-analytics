@@ -3,16 +3,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function getPresentationById(presentationId: string) {
   const session = await auth();
-  const email = session!.user?.email;
+  const userId = session!.user?.id;
 
-  if (!email) throw new Error("Invalid user");
+  if (!userId) throw new Error("Invalid user");
 
   return await prisma.presentation.findFirstOrThrow({
-    where: { id: presentationId, user: { email } },
+    where: { id: presentationId, userId },
     include: {
       _count: {
         select: {
-          events: { where: { eventName: "ready" } },
+          presentationViews: true,
         },
       },
     },

@@ -3,19 +3,15 @@ import { prisma } from "@/lib/prisma";
 
 export async function getUserEvents() {
   const session = await auth();
-  const email = session?.user?.email;
+  const userId = session?.user?.id;
 
-  if (!email) throw new Error("No user not found");
+  if (!userId) throw new Error("No user not found");
 
-  return await prisma.event.findMany({
+  return await prisma.logSlideView.findMany({
     where: {
       presentation: {
-        user: { email },
+        userId,
       },
-    },
-    take: 300,
-    orderBy: {
-      timestamp: "desc",
     },
   });
 }

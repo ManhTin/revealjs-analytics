@@ -12,7 +12,7 @@ export async function getPresentationsByUser() {
     include: {
       _count: {
         select: {
-          events: { where: { eventName: "ready" } },
+          presentationViews: true,
         },
       },
     },

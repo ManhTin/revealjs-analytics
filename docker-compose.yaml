@@ -4,10 +4,10 @@ services:
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: revealjs-pp-tracking-api-dev
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpassword
+      POSTGRES_DB: revealjs-analytics-dev
     networks:
-      - revealjs-pp-tracking-api
+      - revealjs-analytics
 networks:
-  revealjs-pp-tracking-api:
+  revealjs-analytics:
