@@ -6,8 +6,12 @@ export class EventPersistenceService {
 
   async persistEvents(events: ProcessedEvents) {
     try {
-      const logPresentationView = await this.eventRepository.savePresentationViewEvents(
-        events.logPresentationViewEvents,
+      const logPresentationStart = await this.eventRepository.savePresentationStartEvents(
+        events.logPresentationStartEvents,
+      );
+
+      const logPresentationClose = await this.eventRepository.savePresentationCloseEvents(
+        events.logPresentationCloseEvents,
       );
 
       const logSlideView = await this.eventRepository.saveSlideViewEvents(
@@ -27,7 +31,8 @@ export class EventPersistenceService {
       );
 
       return {
-        logPresentationView,
+        logPresentationStart,
+        logPresentationClose,
         logSlideView,
         logLinkAction,
         logMediaAction,

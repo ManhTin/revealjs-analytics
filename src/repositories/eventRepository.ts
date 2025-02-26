@@ -2,24 +2,42 @@ import { prisma } from "@/lib/prisma";
 import type {
   LogLinkAction,
   LogMediaAction,
-  LogPresentationView,
+  LogPresentationClose,
+  LogPresentationStart,
   LogQuizAction,
   LogSlideView,
+  Prisma,
 } from "@prisma/client";
 
 export interface EventRepository {
-  savePresentationViewEvents(events: Omit<LogPresentationView, "id">[]): Promise<any>;
-  saveSlideViewEvents(events: Omit<LogSlideView, "id">[]): Promise<any>;
-  saveLinkActionEvents(events: Omit<LogLinkAction, "id" | "linkType">[]): Promise<any>;
+  savePresentationStartEvents(
+    events: Omit<LogPresentationStart, "id">[],
+  ): Promise<Prisma.BatchPayload>;
+  savePresentationCloseEvents(
+    events: Omit<LogPresentationClose, "id">[],
+  ): Promise<Prisma.BatchPayload>;
+  saveSlideViewEvents(events: Omit<LogSlideView, "id">[]): Promise<Prisma.BatchPayload>;
+  saveLinkActionEvents(
+    events: Omit<LogLinkAction, "id" | "linkType">[],
+  ): Promise<Prisma.BatchPayload>;
   saveMediaActionEvents(
     events: Omit<LogMediaAction, "id" | "mediaType" | "actionType">[],
-  ): Promise<any>;
-  saveQuizActionEvents(events: Omit<LogQuizAction, "id" | "actionType">[]): Promise<any>;
+  ): Promise<Prisma.BatchPayload>;
+  saveQuizActionEvents(
+    events: Omit<LogQuizAction, "id" | "actionType">[],
+  ): Promise<Prisma.BatchPayload>;
 }
 
 export class PrismaEventRepository implements EventRepository {
-  async savePresentationViewEvents(events: Omit<LogPresentationView, "id">[]) {
-    return prisma.logPresentationView.createMany({
+  savePresentationStartEvents(events: Omit<LogPresentationStart, "id>">[]) {
+    return prisma.logPresentationStart.createMany({
+      data: events,
+      skipDuplicates: true,
+    });
+  }
+
+  savePresentationCloseEvents(events: Omit<LogPresentationClose, "id">[]) {
+    return prisma.logPresentationClose.createMany({
       data: events,
       skipDuplicates: true,
     });

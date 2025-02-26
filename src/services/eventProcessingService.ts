@@ -2,7 +2,8 @@ import type {
   LinkType,
   LogLinkAction,
   LogMediaAction,
-  LogPresentationView,
+  LogPresentationClose,
+  LogPresentationStart,
   LogQuizAction,
   LogSlideView,
   MediaActionType,
@@ -11,7 +12,8 @@ import type {
 } from "@prisma/client";
 
 export interface LogEventsDto {
-  logPresentationViewEvents: Omit<LogPresentationView, "id">[];
+  logPresentationStartEvents: Omit<LogPresentationStart, "id">[];
+  logPresentationCloseEvents: Omit<LogPresentationClose, "id">[];
   logSlideViewEvents: Omit<LogSlideView, "id">[];
   logLinkActionEvents: Omit<LogLinkAction, "id">[];
   logMediaActionEvents: Omit<LogMediaAction, "id">[];
@@ -19,7 +21,8 @@ export interface LogEventsDto {
 }
 
 export interface ProcessedEvents {
-  logPresentationViewEvents: Omit<LogPresentationView, "id">[];
+  logPresentationStartEvents: Omit<LogPresentationStart, "id">[];
+  logPresentationCloseEvents: Omit<LogPresentationClose, "id">[];
   logSlideViewEvents: Omit<LogSlideView, "id">[];
   logLinkActionEvents: Omit<LogLinkAction, "id">[];
   logMediaActionEvents: Omit<LogMediaAction, "id">[];
@@ -29,7 +32,8 @@ export interface ProcessedEvents {
 export class EventProcessingService {
   processEvents(events: LogEventsDto): ProcessedEvents {
     return {
-      logPresentationViewEvents: events.logPresentationViewEvents,
+      logPresentationStartEvents: events.logPresentationStartEvents,
+      logPresentationCloseEvents: events.logPresentationCloseEvents,
       logSlideViewEvents: events.logSlideViewEvents,
       logLinkActionEvents: this.processLinkActionEvents(events.logLinkActionEvents),
       logMediaActionEvents: this.processMediaActionEvents(events.logMediaActionEvents),

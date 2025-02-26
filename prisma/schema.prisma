@@ -69,7 +69,8 @@ model Presentation {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  presentationViews LogPresentationView[]
+  presentationCloses LogPresentationClose[]
+  presentationStarts LogPresentationStart[]
   mediaActions      LogMediaAction[]
   quizActions       LogQuizAction[]
   linkActions       LogLinkAction[]
@@ -99,13 +100,27 @@ enum LinkType {
   EXTERNAL
 }
 
-model LogPresentationView {
+model LogPresentationClose {
+  id              String   @id @default(cuid())
+  presentationId  String
+  timestamp       DateTime @default(now())
+  slideNumber     Int
+  presentationUrl String
+  finalProgress   Float
+  totalDwellTime  Int
+
+  presentation    Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
+
+  @@index([presentationId, timestamp])
+  @@index([presentationId])
+}
+
+model LogPresentationStart {
   id              String   @id @default(cuid())
   presentationId  String
   timestamp       DateTime @default(now())
   presentationUrl String
-  finalProgress   Float
-  totalDwellTime  Int
+  slideNumber     Int
 
   presentation    Presentation @relation(fields: [presentationId], references: [id], onDelete: Cascade)
 
