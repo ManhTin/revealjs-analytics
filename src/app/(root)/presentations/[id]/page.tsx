@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { getPresentationById } from "@/data/presentation";
 import {
   ArrowLeft,
@@ -78,9 +79,14 @@ export default async function PageView({ params }: { params: { id: string } }) {
         title="Presentation Detail"
         action={{ path: "/presentations", label: "Back", icon: ChevronLeft }}
       />
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">{presentation.title}</h1>
-        <p className="text-muted-foreground">Analytics Overview</p>
+      <div className="mb-4 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">{presentation.title}</h1>
+          <p className="text-muted-foreground">Analytics Overview</p>
+        </div>
+        <div className="hidden sm:block">
+          <DatePickerWithRange />
+        </div>
       </div>
 
       {/* Top Metrics Row */}
