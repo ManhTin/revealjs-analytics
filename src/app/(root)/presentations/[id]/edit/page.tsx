@@ -2,7 +2,7 @@ import Header from "@/components/header";
 import PresentationForm, {} from "@/components/presentation/presentation-form";
 import { formSubmitAction } from "@/components/presentation/presentation-form-update-action";
 import { auth } from "@/lib/auth";
-import { presentationRepository } from "@/repositories";
+import { PresentationRepository } from "@/repositories";
 import { ChevronLeft } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -13,6 +13,7 @@ export default async function EditPresentation({ params }: { params: { id: strin
   const userId = session?.user?.id;
   if (!userId) redirect("/sign-in");
 
+  const presentationRepository = new PresentationRepository():
   const presentation = await presentationRepository.getPresentationById(id, userId);
 
   return (

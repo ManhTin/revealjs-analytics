@@ -53,9 +53,9 @@ function AvatarDropdown({ session }: { session: Session }) {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src={session.user.image!} />
+          <AvatarImage src={session?.user?.image!} />
           <AvatarFallback>
-            {session.user.name ? shortUsername(session.user.name) : "U"}
+            {session?.user?.name ? shortUsername(session.user.name) : "U"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -73,12 +73,12 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="px-6 py-2 mb-6 space-y-2">
+      <header className="sticky top-0 px-6 py-2 mb-6 space-y-2 bg-background z-10">
         <nav className="flex justify-between items-center">
           <div className="flex items-center space-x-8">
             <NavLink path="/" />
             <NavLink path="/presentations" />
-            <NavLink path="/events" />
+            {/* <NavLink path="/events" /> */}
           </div>
 
           <div className="flex items-center space-x-4">

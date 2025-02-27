@@ -9,7 +9,9 @@ import {
 } from "@/components/ui/card";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { auth } from "@/lib/auth";
-import { presentationRepository } from "@/repositories";
+import { formatToTimeString } from "@/lib/utils";
+import { AnalyticsRepository, PresentationRepository } from "@/repositories";
+import { PresentationAnalyticsService } from "@/services";
 import {
   ArrowLeft,
   ArrowRight,
@@ -26,55 +28,15 @@ export default async function PageView({ params }: { params: { id: string } }) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) redirect("/sign-in");
-  // const presentation = await getPresentationById(id);
+
+  const analyticsRepository = new AnalyticsRepository();
+  const presentationAnalyticsService = new PresentationAnalyticsService(analyticsRepository);
+  const presentationRepository = new PresentationRepository();
+
   const presentation = await presentationRepository.getPresentationById(id, userId);
 
-  // Mock data for charts and visualizations
-  const totalViews = 1204;
-  const totalTimeSum = 11412;
-  const avgTimeString = 840;
-
-  const mockSlideData = [
-    { slide: 1, views: 150, timeSpent: 320 },
-    { slide: 2, views: 145, timeSpent: 280 },
-    { slide: 3, views: 130, timeSpent: 420 },
-    { slide: 4, views: 120, timeSpent: 250 },
-    { slide: 5, views: 110, timeSpent: 200 },
-  ];
-
-  const mockExitData = [
-    { slide: 3, count: 25 },
-    { slide: 5, count: 18 },
-    { slide: 7, count: 12 },
-    { slide: 1, count: 10 },
-    { slide: 9, count: 8 },
-  ];
-
-  const mockStartData = [
-    { slide: 1, count: 150 },
-    { slide: 4, count: 45 },
-    { slide: 7, count: 30 },
-    { slide: 10, count: 15 },
-  ];
-
-  const mockQuizData = {
-    completion: 78,
-    averageScore: 72,
-    totalParticipants: 120,
-    questions: 5,
-  };
-
-  const mockLinkClicks = [
-    { href: "https://example.com/resource1", clicks: 45 },
-    { href: "https://example.com/resource2", clicks: 32 },
-    { href: "https://example.com/resource3", clicks: 27 },
-  ];
-
-  const mockMediaData = {
-    started: 95,
-    completed: 72,
-    completionRate: 76,
-  };
+  const { views, slideData, exitData, startData, quizData, mediaData, linkClicks } =
+    await presentationAnalyticsService.call(id);
 
   return (
     <>
@@ -100,8 +62,8 @@ export default async function PageView({ params }: { params: { id: string } }) {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalViews}</div>
-            <p className="text-xs text-muted-foreground">+20% from last month</p>
+            <div className="text-2xl font-bold">{views.totalViews}</div>
+            <p className="text-xs text-muted-foreground">Non-Unique views</p>
           </CardContent>
         </Card>
 
@@ -111,7 +73,7 @@ export default async function PageView({ params }: { params: { id: string } }) {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalTimeSum || "00:45:30"}</div>
+            <div className="text-2xl font-bold">{formatToTimeString(views.sumDwellTime)}</div>
             <p className="text-xs text-muted-foreground">Across all views</p>
           </CardContent>
         </Card>
@@ -122,112 +84,10 @@ export default async function PageView({ params }: { params: { id: string } }) {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{avgTimeString || "00:05:12"}</div>
+            <div className="text-2xl font-bold">
+              {formatToTimeString(Math.round(views.avgDwellTime))}
+            </div>
             <p className="text-xs text-muted-foreground">Per viewer</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Slide Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Slide Views</CardTitle>
-            <CardDescription>Number of views per slide</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            {/* Chart would go here - using mock bar representation */}
-            <div className="space-y-2">
-              {mockSlideData.map((item) => (
-                <div key={`view-${item.slide}`} className="flex items-center">
-                  <span className="w-10">#{item.slide}</span>
-                  <div className="relative w-full bg-muted h-4 rounded">
-                    <div
-                      className="absolute left-0 top-0 h-4 bg-primary rounded"
-                      style={{ width: `${(item.views / 150) * 100}%` }}
-                    />
-                  </div>
-                  <span className="w-12 text-right text-xs">{item.views}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Time Spent Per Slide</CardTitle>
-            <CardDescription>Average seconds spent on each slide</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            {/* Chart would go here - using mock bar representation */}
-            <div className="space-y-2">
-              {mockSlideData.map((item) => (
-                <div key={`time-${item.slide}`} className="flex items-center">
-                  <span className="w-10">#{item.slide}</span>
-                  <div className="relative w-full bg-muted h-4 rounded">
-                    <div
-                      className="absolute left-0 top-0 h-4 bg-blue-500 rounded"
-                      style={{ width: `${(item.timeSpent / 420) * 100}%` }}
-                    />
-                  </div>
-                  <span className="w-12 text-right text-xs">{item.timeSpent}s</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Audience Flow */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Most Exited Slides</CardTitle>
-              <CardDescription>Where viewers leave the presentation</CardDescription>
-            </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockExitData.slice(0, 3).map((item) => (
-                <div key={`exit-${item.slide}`} className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Slide #{item.slide}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {((item.count / totalViews) * 100).toFixed(1)}% exit rate
-                    </div>
-                  </div>
-                  <div className="font-bold text-red-500">{item.count} exits</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Most Started Slides</CardTitle>
-              <CardDescription>Where viewers begin viewing</CardDescription>
-            </div>
-            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockStartData.slice(0, 3).map((item) => (
-                <div key={`start-${item.slide}`} className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Slide #{item.slide}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {((item.count / totalViews) * 100).toFixed(1)}% start rate
-                    </div>
-                  </div>
-                  <div className="font-bold text-green-500">{item.count} starts</div>
-                </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -240,24 +100,59 @@ export default async function PageView({ params }: { params: { id: string } }) {
             <CardDescription>Performance metrics from quizzes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold text-blue-500">{mockQuizData.averageScore}%</div>
-                <div className="text-sm text-muted-foreground">Average Score</div>
-              </div>
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold text-green-500">{mockQuizData.completion}%</div>
-                <div className="text-sm text-muted-foreground">Completion Rate</div>
-              </div>
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold">{mockQuizData.totalParticipants}</div>
-                <div className="text-sm text-muted-foreground">Participants</div>
-              </div>
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold">{mockQuizData.questions}</div>
-                <div className="text-sm text-muted-foreground">Questions</div>
-              </div>
-            </div>
+            {quizData.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">No quiz data available</div>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold">{quizData.length}</div>
+                    <div className="text-sm text-muted-foreground">Quizzes</div>
+                  </div>
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold">
+                      {quizData.reduce((acc, quiz) => acc + quiz.totalParticipants, 0)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Participants</div>
+                  </div>
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-500">
+                      {quizData.length > 0
+                        ? Math.round(
+                            (quizData.reduce((acc, quiz) => acc + quiz.averageScore, 0) /
+                              quizData.length) *
+                              100,
+                          )
+                        : 0}
+                      %
+                    </div>
+                    <div className="text-sm text-muted-foreground">Average Score</div>
+                  </div>
+                </div>
+
+                {quizData.length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <h4 className="text-sm font-medium">Individual Quiz Performance</h4>
+                    {quizData.map((quiz) => (
+                      <div
+                        key={`quiz-${quiz.title}`}
+                        className="flex items-center justify-between border-b pb-2"
+                      >
+                        <div className="font-medium truncate max-w-[200px]">{quiz.title}</div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-sm text-muted-foreground">
+                            {quiz.totalParticipants} participants
+                          </div>
+                          <div className="font-bold text-blue-500">
+                            {Math.round(quiz.averageScore * 100)}% avg
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -267,22 +162,58 @@ export default async function PageView({ params }: { params: { id: string } }) {
             <CardDescription>Audio, video, and interactive content</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold">{mockMediaData.started}</div>
-                <div className="text-sm text-muted-foreground">Media Started</div>
-              </div>
-              <div className="border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold">{mockMediaData.completed}</div>
-                <div className="text-sm text-muted-foreground">Media Completed</div>
-              </div>
-              <div className="col-span-2 border rounded-md p-4 text-center">
-                <div className="text-2xl font-bold text-blue-500">
-                  {mockMediaData.completionRate}%
+            {mediaData.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">No media data available</div>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold">{mediaData.length}</div>
+                    <div className="text-sm text-muted-foreground">Media files</div>
+                  </div>
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold">
+                      {mediaData.reduce((acc, media) => acc + media.playCount, 0)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Plays</div>
+                  </div>
+                  <div className="border rounded-md p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-500">
+                      {mediaData.length > 0
+                        ? Math.round(
+                            mediaData.reduce((acc, media) => acc + media.avgProgress, 0) /
+                              mediaData.length,
+                          )
+                        : 0}
+                      %
+                    </div>
+                    <div className="text-sm text-muted-foreground">Average Progress</div>
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">Media Completion Rate</div>
-              </div>
-            </div>
+
+                {mediaData.length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <h4 className="text-sm font-medium">Individual Media Performance</h4>
+                    {mediaData.map((media) => (
+                      <div
+                        key={`media-${media.source}`}
+                        className="flex items-center justify-between border-b pb-2"
+                      >
+                        <div className="font-medium truncate max-w-[200px]">{media.source}</div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-sm text-muted-foreground">
+                            {media.playCount} plays
+                          </div>
+                          <div className="font-bold text-blue-500">
+                            {Math.round(media.avgProgress)}% progress
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -297,20 +228,136 @@ export default async function PageView({ params }: { params: { id: string } }) {
           <LinkIcon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {mockLinkClicks.map((item, i) => (
-              <div key={`link-${i}`} className="flex items-center justify-between">
-                <div className="font-medium truncate max-w-md">{item.href}</div>
-                <div className="font-bold">{item.clicks} clicks</div>
-              </div>
-            ))}
-          </div>
+          {linkClicks.length === 0 ? (
+            <div className="text-center py-4 text-muted-foreground">
+              No link click data available
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {linkClicks.map((item) => (
+                <div key={`link-${item.href}`} className="flex items-center justify-between">
+                  <div className="font-medium truncate max-w-md">{item.href}</div>
+                  <div className="font-bold">{item.clicks} clicks</div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
-        <CardFooter className="text-sm text-muted-foreground">
-          Total of {mockLinkClicks.reduce((sum, item) => sum + item.clicks, 0)} clicks on external
-          links
-        </CardFooter>
+        {linkClicks.length > 0 && (
+          <CardFooter className="text-sm text-muted-foreground">
+            Total of {linkClicks.reduce((sum, item) => sum + item.clicks, 0)} clicks on external
+            links
+          </CardFooter>
+        )}
       </Card>
+
+      {/* Audience Flow */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Most Started Slides</CardTitle>
+              <CardDescription>Where viewers begin viewing</CardDescription>
+            </div>
+            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {startData.slice(0, 5).map((item) => (
+                <div key={`start-${item.slide}`} className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium">Slide #{item.slide}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {((item.count / views.totalViews) * 100).toFixed(1)}% start rate
+                    </div>
+                  </div>
+                  <div className="font-bold text-green-500">{item.count} starts</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Most Exited Slides</CardTitle>
+              <CardDescription>Where viewers leave the presentation</CardDescription>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {exitData.slice(0, 5).map((item) => (
+                <div key={`exit-${item.slide}`} className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium">Slide #{item.slide}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {((item.count / views.totalViews) * 100).toFixed(1)}% exit rate
+                    </div>
+                  </div>
+                  <div className="font-bold text-red-500">{item.count} exits</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Slide Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Slide Views</CardTitle>
+            <CardDescription>Number of views per slide</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Chart would go here - using mock bar representation */}
+            <div className="space-y-2">
+              {slideData.map((item) => (
+                <div key={`view-${item.slide}`} className="flex items-center">
+                  <span className="w-10">#{item.slide}</span>
+                  <div className="relative w-full bg-muted h-4 rounded">
+                    <div
+                      className="absolute left-0 top-0 h-4 bg-primary rounded"
+                      style={{
+                        width: `${(item.views / Math.max(...slideData.map((i) => i.views))) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="w-12 text-right text-xs">{item.views}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Time Spent Per Slide</CardTitle>
+            <CardDescription>Average seconds spent on each slide</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Chart would go here - using mock bar representation */}
+            <div className="space-y-2">
+              {slideData.map((item) => (
+                <div key={`time-${item.slide}`} className="flex items-center">
+                  <span className="w-10">#{item.slide}</span>
+                  <div className="relative w-full bg-muted h-4 rounded">
+                    <div
+                      className="absolute left-0 top-0 h-4 bg-blue-500 rounded"
+                      style={{
+                        width: `${(item.timeSpent / Math.max(...slideData.map((i) => i.timeSpent))) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="w-12 text-right text-xs">{item.timeSpent}s</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 }

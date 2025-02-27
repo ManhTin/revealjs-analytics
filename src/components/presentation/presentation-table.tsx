@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Presentation } from "@prisma/client";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 interface PresentationData extends Presentation {
@@ -66,7 +67,11 @@ export const columns: ColumnDef<PresentationData>[] = [
   {
     accessorKey: "title",
     header: "Title",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("title")}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">
+        <Link href={`/presentations/${row.original.id}`}>{row.getValue("title")}</Link>
+      </div>
+    ),
   },
   {
     accessorKey: "url",
@@ -81,7 +86,11 @@ export const columns: ColumnDef<PresentationData>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("url")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase underline">
+        <Link href={row.getValue("url")}>{row.getValue("url")}</Link>
+      </div>
+    ),
   },
   {
     accessorKey: "description",
@@ -96,7 +105,7 @@ export const columns: ColumnDef<PresentationData>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
+    cell: ({ row }) => <div>{row.getValue("description")}</div>,
   },
   {
     accessorKey: "Views",
@@ -113,6 +122,38 @@ export const columns: ColumnDef<PresentationData>[] = [
       );
     },
     cell: ({ row }) => <div className="lowercase">{row.original._count.presentationCloses}</div>,
+  },
+  {
+    accessorKey: "Updated",
+    accessorFn: (row) => row.updatedAt,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Updated
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div>{row.original.updatedAt.toDateString()}</div>,
+  },
+  {
+    accessorKey: "Created",
+    accessorFn: (row) => row.createdAt,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Created
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div>{row.original.createdAt.toDateString()}</div>,
   },
   {
     id: "actions",

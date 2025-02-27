@@ -2,7 +2,7 @@ import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
 import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
 import { auth } from "@/lib/auth";
-import { presentationRepository } from "@/repositories";
+import { PresentationRepository } from "@/repositories";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -26,6 +26,7 @@ export default async function PresentationsPage() {
 }
 
 async function PresentationTableWrapper({ userId }: { userId: string }) {
+  const presentationRepository = new PresentationRepository();
   const data = await presentationRepository.getPresentationsByUser(userId);
 
   return <PresentationTable data={data} />;

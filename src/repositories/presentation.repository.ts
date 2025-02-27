@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Presentation, Prisma } from "@prisma/client";
 
-export interface PresentationRepository {
+export interface AbstractPresentationRepository {
   getPresentationsByUser(userId: string): Promise<
     (Presentation & {
       _count: {
@@ -26,7 +26,7 @@ export interface PresentationRepository {
   deletePresentation(id: string): Promise<Presentation>;
 }
 
-export class PrismaPresentationRepository implements PresentationRepository {
+export class PresentationRepository implements AbstractPresentationRepository {
   async getPresentationsByUser(userId: string) {
     return await prisma.presentation.findMany({
       where: { userId },
@@ -71,5 +71,3 @@ export class PrismaPresentationRepository implements PresentationRepository {
     });
   }
 }
-
-export const presentationRepository: PresentationRepository = new PrismaPresentationRepository();
