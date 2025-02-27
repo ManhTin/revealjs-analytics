@@ -1,15 +1,16 @@
 import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
 import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
-import { getPresentationsByUser } from "@/data/presentation";
 import { auth } from "@/lib/auth";
+import { presentationRepository } from "@/repositories";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function PresentationsPage() {
   const session = await auth();
-  if (!session) redirect("/sign-in");
+  const userId = session?.user?.id;
+  if (!userId) redirect("/sign-in");
 
   return (
     <>
@@ -18,14 +19,14 @@ export default async function PresentationsPage() {
         action={{ path: "/presentations/create", label: "Create", icon: Plus }}
       />
       <Suspense fallback={<DataTableSkeleton rowCount={10} columnCount={4} />}>
-        <PresentationTableWrapper />
+        <PresentationTableWrapper userId={userId} />
       </Suspense>
     </>
   );
 }
 
-async function PresentationTableWrapper() {
-  const data = await getPresentationsByUser();
+async function PresentationTableWrapper({ userId }: { userId: string }) {
+  const data = await presentationRepository.getPresentationsByUser(userId);
 
   return <PresentationTable data={data} />;
 }

@@ -38,7 +38,7 @@ import type { Presentation } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 interface PresentationData extends Presentation {
-  _count: { events: number };
+  _count: { presentationCloses: number };
 }
 
 export const columns: ColumnDef<PresentationData>[] = [
@@ -100,7 +100,7 @@ export const columns: ColumnDef<PresentationData>[] = [
   },
   {
     accessorKey: "Views",
-    accessorFn: (row) => row._count.events,
+    accessorFn: (row) => row._count.presentationCloses,
     header: ({ column }) => {
       return (
         <Button
@@ -112,7 +112,7 @@ export const columns: ColumnDef<PresentationData>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.original._count.events}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.original._count.presentationCloses}</div>,
   },
   {
     id: "actions",

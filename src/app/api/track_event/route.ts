@@ -1,9 +1,9 @@
-import { PrismaLogEventRepository } from "@/repositories/logEvent.repository";
-import { LogEventPersistenceService } from "@/services/logEventPersistence.service";
+import { PrismaLogEventRepository } from "@/repositories";
 import {
+  LogEventPersistenceService,
   LogEventProcessingService,
   type LogEventsDto,
-} from "@/services/logEventProcessing.service";
+} from "@/services";
 
 // Initialize dependencies
 const logEventRepository = new PrismaLogEventRepository();

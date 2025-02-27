@@ -8,23 +8,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
-import { getPresentationById } from "@/data/presentation";
+import { auth } from "@/lib/auth";
+import { presentationRepository } from "@/repositories";
 import {
   ArrowLeft,
   ArrowRight,
   BarChart3,
-  CheckCircle,
   ChevronLeft,
   Clock,
   LinkIcon,
-  PlayCircle,
   Users,
 } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function PageView({ params }: { params: { id: string } }) {
-  // TODO check if user is allowed to view this presentation
   const { id } = await params;
-  const presentation = await getPresentationById(id);
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) redirect("/sign-in");
+  // const presentation = await getPresentationById(id);
+  const presentation = await presentationRepository.getPresentationById(id, userId);
 
   // Mock data for charts and visualizations
   const totalViews = 1204;
