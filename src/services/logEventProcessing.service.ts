@@ -20,7 +20,7 @@ export interface LogEventsDto {
   logQuizActionEvents: Omit<LogQuizAction, "id">[];
 }
 
-export interface ProcessedEvents {
+export interface ProcessedLogEvents {
   logPresentationStartEvents: Omit<LogPresentationStart, "id">[];
   logPresentationCloseEvents: Omit<LogPresentationClose, "id">[];
   logSlideViewEvents: Omit<LogSlideView, "id">[];
@@ -29,8 +29,8 @@ export interface ProcessedEvents {
   logQuizActionEvents: Omit<LogQuizAction, "id">[];
 }
 
-export class EventProcessingService {
-  processEvents(events: LogEventsDto): ProcessedEvents {
+export class LogEventProcessingService {
+  call(events: LogEventsDto): ProcessedLogEvents {
     return {
       logPresentationStartEvents: events.logPresentationStartEvents,
       logPresentationCloseEvents: events.logPresentationCloseEvents,

@@ -9,7 +9,7 @@ import type {
   Prisma,
 } from "@prisma/client";
 
-export interface EventRepository {
+export interface LogEventRepository {
   savePresentationStartEvents(
     events: Omit<LogPresentationStart, "id">[],
   ): Promise<Prisma.BatchPayload>;
@@ -28,7 +28,7 @@ export interface EventRepository {
   ): Promise<Prisma.BatchPayload>;
 }
 
-export class PrismaEventRepository implements EventRepository {
+export class PrismaLogEventRepository implements LogEventRepository {
   savePresentationStartEvents(events: Omit<LogPresentationStart, "id>">[]) {
     return prisma.logPresentationStart.createMany({
       data: events,

@@ -1,20 +1,23 @@
-import { PrismaEventRepository } from "@/repositories/eventRepository";
-import { EventPersistenceService } from "@/services/eventPersistenceService";
-import { EventProcessingService, type LogEventsDto } from "@/services/eventProcessingService";
+import { PrismaLogEventRepository } from "@/repositories/logEvent.repository";
+import { LogEventPersistenceService } from "@/services/logEventPersistence.service";
+import {
+  LogEventProcessingService,
+  type LogEventsDto,
+} from "@/services/logEventProcessing.service";
 
 // Initialize dependencies
-const eventRepository = new PrismaEventRepository();
-const eventProcessingService = new EventProcessingService();
-const eventPersistenceService = new EventPersistenceService(eventRepository);
+const logEventRepository = new PrismaLogEventRepository();
+const logEventProcessingService = new LogEventProcessingService();
+const eventPersistenceService = new LogEventPersistenceService(logEventRepository);
 
 export async function POST(req: Request) {
   try {
     const receivedEvents: LogEventsDto = await req.json();
 
     // Process events (convert string to enum types)
-    const processedEvents = eventProcessingService.processEvents(receivedEvents);
+    const processedEvents = logEventProcessingService.call(receivedEvents);
 
-    const result = await eventPersistenceService.persistEvents(processedEvents);
+    const result = await eventPersistenceService.call(processedEvents);
 
     if (result) {
       return Response.json({ status: 200 });
