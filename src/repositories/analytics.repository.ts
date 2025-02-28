@@ -46,6 +46,44 @@ export class AnalyticsRepository {
     };
   }
 
+  async getAllPresentationViews(
+    userId: string,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<PresentationViews[]> {
+    const viewEvents = await prisma.logPresentationClose.groupBy({
+      by: ["presentationId"],
+      where: {
+        presentation: {
+          userId,
+        },
+        ...(dateFrom &&
+          dateTo && {
+            timestamp: {
+              gte: dateFrom,
+              lte: dateTo,
+            },
+          }),
+      },
+      _count: {
+        id: true,
+      },
+      _sum: {
+        totalDwellTime: true,
+      },
+      _avg: {
+        totalDwellTime: true,
+      },
+    });
+
+    return viewEvents.map((item) => ({
+      presentationId: item.presentationId,
+      totalViews: item._count.id || 0,
+      sumDwellTime: item._sum.totalDwellTime || 0,
+      avgDwellTime: item._avg.totalDwellTime || 0,
+    }));
+  }
+
   async getSlideAnalytics(
     presentationId: string,
     dateFrom?: Date,
@@ -80,6 +118,62 @@ export class AnalyticsRepository {
       views: item._count.id,
       timeSpent: item._sum.dwellTime || 0,
     }));
+  }
+
+  async getPresentationAnalyticsByDay(userId: string, dateFrom?: Date, dateTo?: Date) {
+    const presentationViews = await prisma.logPresentationClose.groupBy({
+      by: ["date"],
+      where: {
+        presentation: {
+          userId,
+        },
+        ...(dateFrom &&
+          dateTo && {
+            date: {
+              gte: dateFrom,
+              lte: dateTo,
+            },
+          }),
+      },
+      _count: {
+        id: true,
+      },
+      _sum: {
+        totalDwellTime: true,
+      },
+      _avg: {
+        totalDwellTime: true,
+      },
+    });
+
+    return presentationViews.map((item) => ({
+      date: item.date,
+      totalViews: item._count.id || 0,
+      sumDwellTime: item._sum.totalDwellTime || 0,
+      avgDwellTime: item._avg.totalDwellTime || 0,
+    }));
+  }
+
+  async getPresentationsWithLatestViews(userId: string, limit = 5) {
+    const presentationViews = await prisma.logPresentationClose.groupBy({
+      by: ["presentationId"],
+      where: {
+        presentation: {
+          userId,
+        },
+      },
+      _max: {
+        timestamp: true,
+      },
+      orderBy: {
+        _max: {
+          timestamp: "desc",
+        },
+      },
+      take: limit,
+    });
+
+    return presentationViews;
   }
 
   async getExitPoints(presentationId: string, dateFrom?: Date, dateTo?: Date): Promise<ExitData[]> {

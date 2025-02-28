@@ -104,6 +104,7 @@ model LogPresentationClose {
   id              String   @id @default(cuid())
   presentationId  String
   timestamp       DateTime @default(now())
+  date            DateTime @default(now()) @db.Date
   slideNumber     Int
   presentationUrl String
   finalProgress   Float

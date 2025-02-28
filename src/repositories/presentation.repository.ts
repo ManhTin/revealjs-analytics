@@ -21,6 +21,17 @@ export interface AbstractPresentationRepository {
     }
   >;
 
+  getPresentationsInfo(
+    userId: string,
+    presentationIds: string[],
+  ): Promise<
+    (Presentation & {
+      _count: {
+        presentationCloses: number;
+      };
+    })[]
+  >;
+
   createPresentation(data: Prisma.PresentationCreateInput): Promise<Presentation>;
   updatePresentation(id: string, data: Prisma.PresentationUpdateInput): Promise<Presentation>;
   deletePresentation(id: string): Promise<Presentation>;
@@ -52,6 +63,26 @@ export class PresentationRepository implements AbstractPresentationRepository {
         },
       },
     });
+  }
+
+  async getPresentationsInfo(userId: string, presentationIds: string[]) {
+    const presentations = await prisma.presentation.findMany({
+      where: {
+        userId,
+        id: {
+          in: presentationIds,
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            presentationCloses: true,
+          },
+        },
+      },
+    });
+
+    return presentations;
   }
 
   async createPresentation(data: Prisma.PresentationCreateInput) {

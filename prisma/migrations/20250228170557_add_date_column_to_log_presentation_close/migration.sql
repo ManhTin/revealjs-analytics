@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "LogPresentationClose" ADD COLUMN     "date" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP;

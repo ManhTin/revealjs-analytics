@@ -1,16 +1,13 @@
 import Header from "@/components/header";
 import { PresentationTable } from "@/components/presentation/presentation-table";
 import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
-import { auth } from "@/lib/auth";
+import { findUserOrRedirect } from "@/lib/utils";
 import { PresentationRepository } from "@/repositories";
 import { Plus } from "lucide-react";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function PresentationsPage() {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) redirect("/sign-in");
+  const userId = await findUserOrRedirect();
 
   return (
     <>

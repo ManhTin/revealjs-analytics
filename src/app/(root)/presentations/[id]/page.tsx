@@ -8,8 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
-import { auth } from "@/lib/auth";
-import { formatToTimeString } from "@/lib/utils";
+import { findUserOrRedirect, formatToTimeString } from "@/lib/utils";
 import { AnalyticsRepository, PresentationRepository } from "@/repositories";
 import { PresentationAnalyticsService } from "@/services";
 import {
@@ -21,13 +20,10 @@ import {
   LinkIcon,
   Users,
 } from "lucide-react";
-import { redirect } from "next/navigation";
 
 export default async function PageView({ params }: { params: { id: string } }) {
   const { id } = await params;
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) redirect("/sign-in");
+  const userId = await findUserOrRedirect();
 
   const analyticsRepository = new AnalyticsRepository();
   const presentationAnalyticsService = new PresentationAnalyticsService(analyticsRepository);

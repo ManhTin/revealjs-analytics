@@ -1,4 +1,4 @@
-import { AnalyticsRepository } from "@/repositories";
+import type { AnalyticsRepository } from "@/repositories";
 import type { DateRange, PresentationAnalytics } from "@/types/analytics";
 
 export class PresentationAnalyticsService {
@@ -31,7 +31,3 @@ export class PresentationAnalyticsService {
     };
   }
 }
-
-export const presentationAnalyticsService = new PresentationAnalyticsService(
-  new AnalyticsRepository(),
-);
