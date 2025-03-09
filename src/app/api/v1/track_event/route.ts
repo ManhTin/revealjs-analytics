@@ -13,10 +13,7 @@ const eventPersistenceService = new LogEventPersistenceService(logEventRepositor
 export async function POST(req: Request) {
   try {
     const receivedEvents: LogEventsDto = await req.json();
-
-    // Process events (convert string to enum types)
     const processedEvents = logEventProcessingService.call(receivedEvents);
-
     const result = await eventPersistenceService.call(processedEvents);
 
     if (result) {
