@@ -1,5 +1,6 @@
 # Reveal.js Analytics Application
 
+Application to receive and process data from the [revealjs-analytics-plugin](https://github.com/ManhTin/revealjs-analytics-plugin).
 Build with Next.js, Tailwind CSS, shadcn and Prisma
 
 
@@ -55,3 +56,8 @@ Build with Next.js, Tailwind CSS, shadcn and Prisma
     ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
+
+## License
+MIT licensed
+
+Copyright (c) 2025 Manh Tin Nguyen
