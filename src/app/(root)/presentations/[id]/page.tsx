@@ -45,9 +45,7 @@ export default async function PageView({ params }: { params: { id: string } }) {
           <h1 className="text-2xl font-bold">{presentation.title}</h1>
           <p className="text-muted-foreground">Analytics Overview</p>
         </div>
-        <div className="hidden sm:block">
-          <DatePickerWithRange />
-        </div>
+        <div className="hidden sm:block">{/* <DatePickerWithRange /> */}</div>
       </div>
 
       {/* Top Metrics Row */}

@@ -40,9 +40,7 @@ export default async function HomePage() {
           <h1 className="text-2xl font-bold">Welcome back</h1>
           <p className="text-muted-foreground">Recent activity in your presentations</p>
         </div>
-        <div className="hidden sm:block">
-          <DatePickerWithRange />
-        </div>
+        <div className="hidden sm:block">{/* <DatePickerWithRange /> */}</div>
       </div>
 
       {/* Top Metrics Row */}
